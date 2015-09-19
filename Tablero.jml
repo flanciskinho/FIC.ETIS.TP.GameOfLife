@@ -1,0 +1,202 @@
+import java.util.Vector;
+import java.lang.*;
+
+public class Tablero
+{
+
+
+private /*@ spec_public @*/ Object [][] tablero;
+private /*@ spec_public @*/ boolean circular;
+private /*@ spec_public @*/ int xMax;
+private /*@ spec_public @*/ int yMax;
+
+
+ /*@ private normal_behavior
+   @ requires numFil >=5 && numCol >=5;
+   @ ensures xMax == numFil;
+   @ ensures yMax == numCol;
+   @ ensures circular == circ;
+   @ ensures (\forall int I; 0 <= I && I < xMax;
+   @              (\forall int J; 0 <= J && J < yMax;
+   @                 ((Boolean) tablero[I][J]).booleanValue() == false));
+   @ also
+   @ private exceptional_behavior
+   @ requires numFil < 5 || numCol < 5;
+   @ signals(TableroException);
+   @ pure
+   @*/  
+   public Tablero(int numFil, int numCol, boolean circ) throws TableroException;
+
+
+   /*@ private normal_behavior
+     @ requires tablero != null;
+     @ requires ((fil >= 0)   && (col >= 0) && (fil < xMax) && (col < yMax));
+     @ ensures (\forall int I;0 < I && I < xMax-1;
+     @            (\forall int J; 0 < J && J < yMax-1;
+     @               tablero[fil][col] == \old(tablero[fil][col]) ));
+     @ ensures \result == tablero[fil][col];
+     @ also
+     @ private exceptional_behavior
+     @ requires ((fil < 0) || (col < 0) || (col >= yMax) || (fil >= xMax) || (tablero==null));
+     @ signals(TableroException);
+     @ pure
+     @*/
+    public Object obtenerElemento(int fil, int col) throws TableroException;
+
+
+   /*@ private normal_behavior
+     @ requires circular == false;
+     @ requires tablero != null;
+     @ requires ((0 < fil) && (fil < xMax-1) && (0 < col) && (col < yMax-1));
+     @ ensures tablero[fil][col] == elemento && 
+     @    (\forall int I; I >= 0 && I < xMax;
+     @        (\forall int J; J >= 0 && J < yMax;
+     @            (I!= fil || J != col) ==> tablero[I][J] == \old(tablero[I][J]) ));
+     @ also
+     @ private normal_behavior
+     @ requires circular == true;
+     @ //(* es la esquina de arriba a la izquierda*)
+     @ requires tablero != null;
+     @ requires (fil == 1);
+     @ requires (col == 1);
+     @ ensures tablero[fil][col]       == elemento;     //(*cambio el propio elemento*)
+     @ ensures tablero[xMax-1][yMax-1] == elemento;     //(*es la esquina opuesta*)
+     @ ensures tablero[1][yMax-1]      == elemento;     //(*es la columna opuesta*)      
+     @ ensures tablero[xMax-1][1]      == elemento;     //(*es la fila opuesta*)
+     @ ensures (\forall int I;I >= 0 && I < xMax;
+     @            (\forall int J; J >= 0 && J < yMax;
+     @               ((I!=1 && J!=1)||(I!= xMax-1 && J!=yMax-1)||(I!=1 && J!=yMax-1)||(I!=xMax-1 && J!=1)) <==
+     @               ((Boolean) tablero[I][J]).booleanValue() == \old(((Boolean) tablero[I][J]).booleanValue()) ));
+     @ also
+     @ private normal_behavior
+     @ requires circular == true;
+     @ requires tablero != null;
+     @ //(* es la esquina de arriba a la derecha*)
+     @ requires (fil == 1);
+     @ requires (col == yMax-2);
+     @ ensures tablero[fil][col]       == elemento;     //(*cambio el propio elemento*)
+     @ ensures tablero[xMax-1][0]      == elemento;     //(*es la esquina opuesta*)
+     @ ensures tablero[1][0]           == elemento;     //(*es la columna opuesta*)      
+     @ ensures tablero[xMax-1][yMax-2] == elemento;     //(*es la fila opuesta*)
+     @ ensures (\forall int I;0 <= I && I < xMax;
+     @            (\forall int J; 0 <= J && J < yMax;
+     @               ((I!=1 && J!=yMax-2)||(I!= xMax-1&&J!=0)||(I!=1&&J!=0)||(I!= xMax-1 && J!=yMax-2)) <==
+     @               ((Boolean) tablero[I][J]).booleanValue() == \old(((Boolean) tablero[I][J]).booleanValue()) ));
+     @ also
+     @ private normal_behavior
+     @ requires circular == true;
+     @ requires tablero != null;
+     @ //(* es la esquina de abajo a la izquierda*)
+     @ requires (fil == xMax-2);
+     @ requires (col == 1);
+     @ ensures tablero[fil][col]         == elemento;     //(*cambio el propio elemento*)
+     @ ensures tablero[0][yMax-1]        == elemento;     //(*es la esquina opuesta*)
+     @ ensures tablero[xMax-2][yMax-1]   == elemento;     //(*es la columna opuesta*)      
+     @ ensures tablero[0][1]             == elemento;     //(*es la fila opuesta*)
+     @ ensures (\forall int I;0 <= I && I < xMax;
+     @            (\forall int J; 0 <= J && J < yMax;
+     @               ((I!=xMax-2 && J!=1)||(I!=0 && J!=yMax-1)||(I!=xMax-2 && J!=yMax-1)||(I!=0 && J!=1)) <==
+     @               ((Boolean) tablero[I][J]).booleanValue() == \old(((Boolean) tablero[I][J]).booleanValue()) ));
+     @ also
+     @ private normal_behavior
+     @ requires circular == true;
+     @ requires tablero != null;
+     @ //(* es la esquina de abajo a la derecha*)
+     @ requires (fil == xMax-2);
+     @ requires (col == yMax-2);
+     @ ensures tablero[fil][col]   == elemento;     //(*cambio el propio elemento*)
+     @ ensures tablero[0][0]       == elemento;     //(*es la esquina opuesta*)
+     @ ensures tablero[xMax-2][0]  == elemento;     //(*es la columna opuesta*)      
+     @ ensures tablero[0][yMax-2]  == elemento;     //(*es la fila opuesta*)
+     @ ensures    (\forall int I;0 <= I && I < xMax;
+     @               (\forall int J; 0 <= J && J < yMax;
+     @                  ((I!=xMax-2 && J!=yMax-2)||(I!=0&&J!=0)||(I!=xMax-2&&J!=0)||(I!=0 && J!=yMax-2)) <==
+     @                  ((Boolean) tablero[I][J]).booleanValue() == \old(((Boolean) tablero[I][J]).booleanValue()) ));
+     @ also
+     @ private normal_behavior
+     @ requires circular == true;
+     @ requires tablero != null;
+     @ //(* es la fila superior que tiene de vecinos la de abajo*)
+     @ requires (fil==1);
+     @ requires (col>=2 && col<=yMax-3);
+     @ ensures tablero[fil][col]    == elemento;
+     @ ensures tablero[xMax-1][col] == elemento;
+     @ ensures    (\forall int I;0 <= I && I < xMax;
+     @               (\forall int J; 0 <= J && J < yMax;
+     @                  ((I!=fil || J!=col)&&(I!=xMax-1||J!=col)) <== tablero[I][J] == \old(tablero[I][J])));
+     @ also
+     @ private normal_behavior
+     @ requires circular == true;
+     @ requires tablero != null;
+     @ //(* es la fila inferior que tiene de vecinos la de arriba*)
+     @ requires (fil==xMax-2);
+     @ requires (col>=2 && col<=yMax-3);
+     @ ensures tablero[fil][col] == elemento;
+     @ ensures tablero[0][col]   == elemento;
+     @ ensures    (\forall int I;0 <= I && I < xMax;
+     @               (\forall int J; 0 <= J && J < yMax;
+     @                  ((I!=fil || J!=col)&&(I!=0||J!=col)) <== tablero[I][J] == \old(tablero[I][J])));
+     @ also
+     @ private normal_behavior
+     @ requires circular == true;
+     @ requires tablero != null;
+     @ //(* es la columna de la izquierda que tiene los vecinos en la de la derecha*)
+     @ requires (fil>=2 && fil<=xMax-3);
+     @ requires (col==1);
+     @ ensures tablero[fil][col]    == elemento;
+     @ ensures tablero[fil][yMax-1] == elemento;
+     @ ensures (\forall int I;0 <= I && I < xMax;
+     @            (\forall int J; 0 <= J && J < yMax;
+     @               ((I!=fil || J!=col)&&(I!=fil||J!=yMax-1)) <== tablero[I][J] == \old(tablero[I][J]) ));
+     @ also
+     @ private normal_behavior
+     @ requires circular == true;
+     @ requires tablero != null;
+     @ //(* es la columna de la derecha que tiene los vecinos en la de la izquierda*)
+     @ requires (fil>=2 && fil<=xMax-3);
+     @ requires (col==yMax-2);
+     @ ensures tablero[fil][col]    == elemento;
+     @ ensures tablero[fil][0] == elemento;
+     @ ensures (\forall int I;0 <= I && I < xMax;
+     @            (\forall int J; 0 <= J && J < yMax;
+     @               ((I!=fil || J!=col)&&(I!=fil||J!=0)) <== tablero[I][J] == \old(tablero[I][J]) ));
+     @ also
+     @ private normal_behavior
+     @ requires circular == true;
+     @ requires tablero != null;
+     @ //(* es la parte del tablero que no esta en un borde*)
+     @ requires (fil>=2 && fil<=xMax-3);
+     @ requires (col>=2 && col<=yMax-3);
+     @ ensures tablero[fil][col]    == elemento;
+     @ ensures (\forall int I;0 <= I && I < xMax;
+     @            (\forall int J; 0 <= J && J < yMax;
+     @               (I!=fil && J!=col) ==> tablero[I][J] == \old(tablero[I][J])));
+     @ also
+     @ private exceptional_behavior
+     @ requires ((fil < 1) || (col < 1) || (fil > xMax - 2) || (col > yMax -2) || (tablero == null));
+     @ signals(TableroException);
+     @ pure
+     @*/
+     public void insertarElemento(int fil, int col, Object elemento) throws TableroException;
+
+   /*@ private normal_behavior
+     @ requires tablero != null;
+     @ requires ((fil >= 1)   && (col >= 1));
+     @ requires ((fil < xMax-1) && (col < yMax-1));
+     @ ensures  (\forall int I;0 < I && I < xMax-1;
+     @            (\forall int J; 0 < J && J < yMax-1;
+     @               tablero[fil][col] == \old(tablero[fil][col]) ));
+     @ ensures (\num_of int I; 0<=I && I<\result.size(); ((Boolean) \result.get(I)).booleanValue() == false) == (\num_of int J; -1<=J && J<=1; ((Boolean) tablero[fil-1][col+J]).booleanValue() == false) + (\num_of int K; -1<=K && K<=1; ((Boolean) tablero[fil][col+K]).booleanValue() == false) + (\num_of int T; -1<=T && T<=1; ((Boolean) tablero[fil+1][col+T]).booleanValue() == false);
+     @ ensures (\num_of int I; 0<=I && I<\result.size(); ((Boolean) \result.get(I)).booleanValue() == true ) == (\num_of int J; -1<=J && J<=1; ((Boolean) tablero[fil-1][col+J]).booleanValue() == true ) + (\num_of int K; -1<=K && K<=1; ((Boolean) tablero[fil][col+K]).booleanValue() == true ) + (\num_of int T; -1<=T && T<=1; ((Boolean) tablero[fil+1][col+T]).booleanValue() == true );
+     @ ensures (\forall int I;0 < I && I < xMax;
+     @            (\forall int J; 0 < J && J < yMax;
+     @               tablero[fil][col] == \old(tablero[fil][col])));
+     @ also
+     @ private exceptional_behavior
+     @ requires ((fil<1)||(col<1)||(fil>=xMax-1)||(col>=yMax-1)||(tablero==null));
+     @ signals(TableroException);
+     @ pure
+     @*/
+     public Vector obtenerVecinos(int fil, int col) throws TableroException;
+
+}

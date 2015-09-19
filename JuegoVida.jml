@@ -1,0 +1,141 @@
+import java.util.Vector;
+import java.lang.*;
+
+public class JuegoVida
+{
+
+
+private /*@ spec_public @*/ int xMax;
+private /*@ spec_public @*/ int yMax;
+private /*@ spec_public @*/ Tablero board;
+private /*@ spec_public @*/ Tablero boardAux;
+ 
+ /*@ private normal_behavior
+   @ requires numFil >=3 && numCol >=3;
+   @ ensures xMax == numFil + 2;
+   @ ensures yMax == numCol + 2;
+   @ ensures board !=null;
+   @ ensures boardAux !=null;
+   @ also
+   @ private exceptional_behavior
+   @ requires numFil < 3 || numCol < 3;
+   @ signals(JuegoVidaException);
+   @ pure
+   @*/
+   public JuegoVida(int numFil, int numCol, boolean circ) throws JuegoVidaException;
+
+ /*@ ensures (\forall int I;0 < I && I < xMax-1;
+   @            (\forall int J; 0 < J && J < yMax-1;
+   @               ((Boolean) board.obtenerElemento(I,J)).booleanValue() == false));
+   @*/
+   public void borrarCuadricula();
+   
+   //@ private normal_behavior
+   //@ requires ((fil >= 1) && (col >= 1));
+   //@ requires ((fil <=  xMax-2) && (col <= yMax-2));
+   //@ requires (boardAux != null);
+   //@ ensures \result == (\num_of int I; I>=0 && I<boardAux.obtenerVecinos(fil,col).size();
+   //@                      I!=4 && ((Boolean)boardAux.obtenerVecinos(fil,col).get(I)).booleanValue() == true );
+   //@ ensures ( ((Boolean) boardAux.obtenerElemento(fil,col)).booleanValue() == \old( ((Boolean) boardAux.obtenerElemento(fil,col)).booleanValue() ));
+   //@ also
+   //@ private exceptional_behavior
+   //@ requires ((fil < 1) || (col < 1) || (fil > (xMax -2)) || (col > (yMax -2)) || (boardAux == null));
+   //@ signals(JuegoVidaException);
+   //@ pure
+   public int contarVecinos(int fil, int col) throws JuegoVidaException;
+
+   //@ private normal_behavior
+   //@ requires ((fil >= 1) && (col >= 1));
+   //@ requires ((fil <= xMax-2) && (col <= yMax-2));
+   //@ requires (board != null);
+   //@ ensures ( ((Boolean) board.obtenerElemento(fil,col)).booleanValue() == true);
+   //@ ensures (\forall int I; I>=1 && I<xMax-1;
+   //@            (\forall int J; J>=1 && J<yMax-1;
+   //@               (I!=fil && J!=col) ==> board.obtenerElemento(I,J) == \old(board.obtenerElemento(I,J))));
+   //@ also
+   //@ private exceptional_behavior
+   //@ requires ((fil < 1) || (col < 1) || (fil > (xMax -2)) || (col > (yMax -2)) || (board == null));
+   //@ signals(JuegoVidaException);
+   //@ pure
+   public void insertarCelula(int fil, int col) throws JuegoVidaException;
+
+   //@ private normal_behavior
+   //@ requires ((fil!=null) && (col!=null));
+   //@ requires (fil.size() == col.size());
+   //@ requires (board != null);
+   //@ requires (\forall int J; J >= 0 && J < fil.size(); ((Integer) fil.get(J)).intValue() > 0 && ((Integer) fil.get(J)).intValue() < xMax-1);
+   //@ requires (\forall int J; J >= 0 && J < col.size(); ((Integer) col.get(J)).intValue() > 0 && ((Integer) col.get(J)).intValue() < yMax-1);
+   //@ ensures (\forall int I; I>=0 && I < fil.size();
+   //@            ((Boolean)board.obtenerElemento( ((Integer) fil.get(I)).intValue(),((Integer) col.get(I)).intValue())).booleanValue() == true);
+   //@ ensures ( (\sum int I; I > 0 && I < xMax -1;
+   //@              (\num_of int J; J > 0 && J < yMax-1;
+   //@                 ((Boolean)board.obtenerElemento(I,J)).booleanValue()!=\old(((Boolean)board.obtenerElemento(I,J)).booleanValue()))) +
+   //@           ( \num_of int K; K>=0 && K < fil.size(); 
+   //@           ((Boolean) board.obtenerElemento( ((Integer) fil.get(K)).intValue(), ((Integer) col.get(K)).intValue())).booleanValue() ==
+   //@           \old( ((Boolean) board.obtenerElemento( ((Integer) fil.get(K)).intValue(), ((Integer) col.get(K)).intValue())).booleanValue()))
+   //@         <= fil.size() );
+   //@ also
+   //@ private exceptional_behavior
+   //@ requires ((fil == null) || (col == null) || (fil.size() != col.size()) || (board == null));
+   //@ signals(JuegoVidaException);
+   //@ also
+   //@ private exceptional_behavior
+   //@ requires ( (\exists int J; J >= 0 && J < fil.size(); ((Integer) fil.get(J)).intValue() <= 0 || ((Integer) fil.get(J)).intValue() >= xMax-1) ||
+   //@            (\exists int J; J >= 0 && J < col.size(); ((Integer) col.get(J)).intValue() <= 0 || ((Integer) col.get(J)).intValue() >= yMax-1) );
+   //@ signals(JuegoVidaException);
+   //@ pure
+   public void insertarCelulas(Vector fil, Vector col) throws JuegoVidaException;
+
+
+   //@ private normal_behavior
+   //@ requires ((fil >= 1) && (col >=1));
+   //@ requires ((fil <= xMax-2) && (col <= yMax-2));
+   //@ requires (boardAux != null);
+   //@ ensures \result == (((Boolean) boardAux.obtenerElemento(fil,col)).booleanValue());
+   //@ ensures (\forall int I; I>=1 && I<xMax-1;
+   //@            (\forall int J; J>=1 && J<yMax-1;
+   //@               boardAux.obtenerElemento(I,J) == \old(boardAux.obtenerElemento(I,J))));
+   //@ also
+   //@ private exceptional_behavior
+   //@ requires ((fil < 1) || (col < 1) || (fil > (xMax -2)) || (col > (yMax -2)) || (boardAux == null));
+   //@ signals(JuegoVidaException);
+   //@ pure
+   public boolean celulaViva(int fil, int col)  throws JuegoVidaException;
+
+   //@ private normal_behavior
+   //@ requires ((fil > 0) && (col > 0));
+   //@ requires ((fil < xMax-1) && (col < yMax-1));
+   //@ requires (board != null);
+   //@ ensures ( ((Boolean) board.obtenerElemento(fil,col)).booleanValue() == !(((Boolean) \old (board.obtenerElemento(fil,col)))).booleanValue() );
+   //@ ensures (\forall int I; I>0 && I<xMax-1;
+   //@            (\forall int J;J>0 && J<yMax-1;
+   //@               (I!=fil && J!=col) ==> board.obtenerElemento(I,J) == \old(board.obtenerElemento(I,J))));
+   //@ also
+   //@ private exceptional_behavior
+   //@ requires ((fil <= 0) || (col <= 0) || (fil >= xMax -1) || (col >= yMax-1) || (board == null));
+   //@ signals(JuegoVidaException);
+   //@ pure
+   public void cambiarEstado(int fil, int col) throws JuegoVidaException;
+
+   //ES LA COPIA
+   //@ ensures (\forall int I; I>0 && I<xMax-1;
+   //@            (\forall int J; J>0 && J<yMax-1;
+   //@               ((Boolean) boardAux.obtenerElemento(I,J)).booleanValue() == \old(((Boolean) board.obtenerElemento(I,J)).booleanValue())));
+   //MIRARMOS QUE CELULAS ESTAN VIVAS
+   //@ ensures (\forall int I; I>0 && I<xMax-1;
+   //@            (\forall int J; J>0 && J<yMax-1;
+   //@               ((Boolean) board.obtenerElemento(I,J)).booleanValue() == true ==>
+   //@               (contarVecinos(I,J) == 3) || (celulaViva(I,J) && contarVecinos(I,J)==2)));
+   //MIRAMOS QUE CELULAS ESTAN MUERTAS
+   //@ ensures (\forall int I; I>0 && I<xMax-1;
+   //@            (\forall int J; J>0 && J<yMax-1;
+   //@               ((Boolean) board.obtenerElemento(I,J)).booleanValue() == false ==>
+   //@               (contarVecinos(I,J) != 3) || (celulaViva(I,J) && contarVecinos(I,J)!=2)));
+   public void evolucionar();
+
+   //@ ensures \result == (\forall int I; I>0 && I<xMax-1;
+   //@                        (\forall int J; J>0 && J<yMax-1;
+   //@                           ((Boolean) boardAux.obtenerElemento(I,J)).booleanValue() == ((Boolean) board.obtenerElemento(I,J)).booleanValue()));
+   public boolean juegoBloqueado();
+
+}
